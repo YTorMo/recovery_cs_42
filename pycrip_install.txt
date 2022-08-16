@@ -1,0 +1,21 @@
+python -m pip install ...
+
+Set-ExecutionPolicy Unrestricted
+Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | Format-Table –AutoSize
+wmic product get Description,InstallDate
+python -m pip install winapps
+install_location=WindowsPath(
+install_date=datetime.date(
+uninstall_string='
+name='
+Get-ItemProperty -Path "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*", "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*", "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" |where { $_.DisplayName -ne $null } | Select-Object DisplayName, DisplayVersion, InstallDate
+
+Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\* | select-object DisplayName, InstallDate
+
+Cscript C:\sources\etwproviders\etwproviderinstall.vbs install C:\sources\etwproviders
+
+msiexec /i C:\Users\myusername\Downloads\somepackage.msi /L*v install.txt
+
+wmic product get name,version
+
+C:\Users\vagrant\AppData\Roaming\Microsoft\Windows\Start Menu\Programs
