@@ -6,9 +6,128 @@ import os
 import winapps
 from browser_history import get_history
 import sqlite3 as sql
+from datetime import date
+
 
 app_list = set()
+app_list_all = set()
+app_list_diff = set()
 
+
+#----------------------------------MAIN----------------------------------------
+
+def main():
+    createDB()
+    events_log()
+    recent_files()
+    software_installed()
+    open_process()
+    browser_history()
+    device_conected()
+
+#----------------------------------MAIN----------------------------------------
+
+#------------------------------OPEN PROCESS------------------------------------
+
+def open_process():
+    db_name = "open_process"
+    createTable(db_name)
+
+    for process in c.Win32_Process ():
+        regis = []
+        regis.append(str(process.Name))
+        regis.append(datetime.datetime.now())
+        insertRow(db_name, regis)
+
+#------------------------------OPEN PROCESS------------------------------------
+
+#-------------------------------EVENTS LOG-------------------------------------
+
+def events_log():
+    db_name = "events_log"
+    createTable(db_name)
+
+    hand = win32evtlog.OpenEventLog(None, 'EventLogRegister')
+    flags= win32evtlog.EVENTLOG_BACKWARDS_READ|win32evtlog.EVENTLOG_SEQUENTIAL_READ
+    records=win32evtlog.ReadEventLog(hand, flags, 0)
+
+    for record in records:
+        regis = []
+        regis.append(str(record.SourceName))
+        rec_time = record.TimeWritten
+        rec_time = str(rec_time).split("-")
+        y = rec_time[0]
+        m = rec_time[1]
+        rec_time = rec_time[2].split(" ")
+        d = rec_time[0]
+        rec_time = datetime.date(int(y), int(m), int(d))
+        regis.append(rec_time)
+        insertRow(db_name, regis)
+
+#-------------------------------EVENTS LOG-------------------------------------
+
+#------------------------------RECENT FILES------------------------------------
+
+def recent_files():
+    db_name = "recent_files"
+    createTable(db_name)
+
+    HOME = os.getenv("HOME")
+    PATH_RECENT = HOME + "\AppData\Roaming\Microsoft\Windows\Recent"
+
+    for root, dirs, files in os.walk(PATH_RECENT):
+            for f in files:
+                try:
+                    r_time = os.path.getmtime(PATH_RECENT + "\\" + str(f))
+                    f_time = datetime.date.fromtimestamp(r_time)
+                    regis = []
+                    regis.append(f)
+                    regis.append(f_time)
+                    insertRow(db_name, regis)
+                except:
+                    pass
+
+#------------------------------RECENT FILES------------------------------------
+
+#----------------------------CONECTED DEVICES----------------------------------
+
+def device_conected():
+
+    db_name_pm = "PhysicalMedia"
+    createTable(db_name_pm)
+    if not c.Win32_PhysicalMedia():
+        print("No Physical Media devices")
+    else:
+        for item in c.Win32_PhysicalMedia():
+            if item.Name:
+                regis = []
+                regis.append(item.Name)
+                regis.append(datetime.datetime.now())
+                insertRow(db_name_pm, regis)
+
+    db_name_dd = "DiskDrive"
+    createTable(db_name_dd)
+    for drive in c.Win32_DiskDrive():
+        regis = []
+        regis.append(drive.Name)
+        regis.append(datetime.datetime.now())
+        insertRow(db_name_dd, regis)
+
+    db_name_ld = "LogicalDisk"
+    createTable_ld(db_name_ld)
+    for disk in c.Win32_LogicalDisk():
+        regis = []
+        regis.append(disk.Name)
+        regis.append(hd_type(disk.DriveType))
+        insertRow_ld(db_name_ld, regis)
+
+    db_name_usb = "USB"
+    createTable(db_name_usb)
+    for usb in c.Win32_USBController():
+        regis = []
+        regis.append(usb.Name)
+        regis.append(datetime.datetime.now())
+        insertRow(db_name_dd, regis)
 
 
 def hd_type(h_type):
@@ -28,113 +147,76 @@ def hd_type(h_type):
         c_type = "RAM Disk"
     return c_type
 
+#----------------------------CONECTED DEVICES----------------------------------
 
-
-
-def main():
-    #events_log()
-    #recent_files()
-    #software_installed()
-    start_menu()
-    #open_process()
-    #browser_history()
-    #device_conected()
-
-
-
-#time_test = datetime.datetime(2022, 8, 10, 8, 52, 51)
-#print (time_test)
-def open_process():
-    print("\n   ----------------------------------------    \n")
-    for process in c.Win32_Process ():
-        print (process.ProcessId, process.Name)
-
-def events_log():
-    print("\n   ----------------------------------------    \n")
-
-    hand = win32evtlog.OpenEventLog(None, 'EventLogRegister')
-    flags= win32evtlog.EVENTLOG_BACKWARDS_READ|win32evtlog.EVENTLOG_SEQUENTIAL_READ
-    records=win32evtlog.ReadEventLog(hand, flags, 0)
-
-    for record in records:
-        print(record.SourceName)
-        print (record.TimeWritten)
-
-def recent_files():
-    print("\n   ----------------------------------------    \n")
-
-    HOME = os.getenv("HOME")
-    PATH_RECENT = HOME + "\AppData\Roaming\Microsoft\Windows\Recent"
-
-    for root, dirs, files in os.walk(PATH_RECENT):
-            for f in files:
-                try:
-                    r_time = os.path.getmtime(PATH_RECENT + "\\" + str(f))
-                    f_time = datetime.date.fromtimestamp(r_time)
-                    print(str(f) + "    " + str(f_time))
-                except:
-                    pass
-
-def device_conected():
-    print("\n   ----------------------------------------    \n")
-
-    if not c.Win32_PhysicalMedia():
-        print("No Physical Media devices")
-    else:
-        for item in c.Win32_PhysicalMedia():
-            if item.Name:
-                print(item.Name)
-
-    for drive in c.Win32_DiskDrive():
-        print(drive.Name)
-
-    for disk in c.Win32_LogicalDisk():
-        print(disk.Name + "     " + hd_type(disk.DriveType))
-
-    if not c.Win32_USBController():
-        print("No USB devices")
-    else:
-        for usb in c.Win32_USBController():
-            print(usb)
+#---------------------------SOFTWARE INSTALLED---------------------------------
 
 def software_installed():
     global app_list
-    print("\n   ----------------------------------------    \n")
+    global app_list_all
+    global app_list_diff
 
-    print(len(c.Win32_InstalledWin32Program ()))
-#    for inst in c.Win32_InstalledWin32Program ():
-#        print("\n   ++++++++++++++++++++++++++++++++++++++++    ")
-#        print("Name:" + inst.Name)#
-#        print("    ++++++++++++++++++++++++++++++++++++++++    \n")
-    
-    print("\n   ----------------------------------------    \n")
-    installed_app()
-    print("\n   ----------------------------------------    \n")
+    db_name = "software_installed"
+    createTable(db_name)
+
+    installed_app(db_name)
 #    for inst_s in c.Win32_InstalledStoreProgram():
 #        print(inst_s.Name)
-    #print("\n   ----------------------------------------    \n")
     for product in c.Win32_Product():
-        print(product.Name)
+        regis = []
         app_list.add(product.Name)
         y = product.InstallDate[:4]
         m = product.InstallDate[4:6]
         d = product.InstallDate[7:]
         time_inst = datetime.date(int(y), int(m), int(d))
-        print(time_inst)
+        regis.append(product.Name)
+        regis.append(time_inst)
+        insertRow(db_name, regis)
 
 
-def installed_app():
+    for inst in c.Win32_InstalledWin32Program ():
+        app_list_all.add(inst.Name)
+
+    for all_elem in app_list_all:
+        if not app_list.__contains__(all_elem):
+            app_list.add(all_elem)
+            all_elem = str(all_elem).split("Microsoft ")
+            all_elem = str(all_elem[-1]).split(" (")
+            app_list_diff.add(all_elem[0])
+    for elem_diff in app_list_diff:
+        regis = []
+        path_date = find_path_date(elem_diff)
+        regis.append(elem_diff)
+        regis.append(path_date)
+        insertRow(db_name, regis)
+
+
+
+def find_path_date(pattern):
+    time_low = None
+    for root, dirs, files in os.walk("C:\\"):
+        for name in files:
+            if name.__contains__(pattern):
+                c_time = os.path.getctime(os.path.join(root, name))
+                fc_time = datetime.date.fromtimestamp(c_time)
+                if time_low == None or time_low > fc_time:
+                    time_low = fc_time
+    return time_low
+
+
+def installed_app(db_name):
     global app_list
+    regis = []
     for app in winapps.list_installed():
         name = str(app).split("name='")
         name = name[1].split("', ")
-        #print(app.install_date)
-        print (name[0])
+        regis.append(name[0])
         app_list.add(name[0])
-        get_install_date(app)
+        get_install_date(app, db_name, regis)
+        regis = []
 
 
-def get_install_date(app):
+def get_install_date(app, db_name, regis):
     inst_date_r1 = str(app).split("install_date=")
     inst_date_r2 = (inst_date_r1[-1]).split(", i")
     if inst_date_r2[0] == "None":
@@ -144,9 +226,9 @@ def get_install_date(app):
         if not (un_path_r.endswith(")")):
             c_time = os.path.getctime(un_path_r)
             dt_c = datetime.date.fromtimestamp(c_time)
-            print(dt_c)
+            regis.append(dt_c)
         else:
-            print("None")
+            regis.append(None)
     else:
         num_date = inst_date_r2[0]
         splt_date = num_date.split(",")
@@ -154,32 +236,82 @@ def get_install_date(app):
         m_date = int(splt_date[-2])
         d_date = int(splt_date[-1][:-1])
         inst_date = datetime.date(int(y_date), int(m_date), int(d_date))
-        print(inst_date) 
-    print ("\n\n")
+        regis.append(inst_date)
+    insertRow(db_name, regis)
 
+#---------------------------SOFTWARE INSTALLED---------------------------------
 
-def start_menu():
-    print("\n   ----------------------------------------    \n")
-    PATH_APP = os.getenv("START_MENU_PATH")
-    for folder in os.listdir(PATH_APP):
-        if not str(folder).__contains__("."):
-            folder_n = str(folder)
-            for files in os.listdir(PATH_APP + "\\" + folder_n):
-                if str(files).__contains__(folder_n):
-                    print(folder_n)
-        elif str(folder).__contains__(".lnk"):
-            print(str(folder)[:-4])
-
+#----------------------------BROWSER HISTORY-----------------------------------
 
 def browser_history():
+
+    db_name = "browser_history"
+    createTable(db_name)
+
     outputs = get_history()
 
     his = outputs.histories
     for h in his:
+        regis = []
         h_date = (h[0]).date()
         h_url = h[1]
-        print(str(h_url) + "        " + str(h_date))
-        print("\n")
+        regis.append(h_url)
+        regis.append(h_date)
+        insertRow(db_name, regis)
+
+#----------------------------BROWSER HISTORY-----------------------------------
+
+#-------------------------DATABASE CREATION--------------------------------
+
+def createDB():
+	conn = sql.connect("recovery.db")
+	conn.commit()
+	conn.close()
+
+def createTable(db_name):
+	conn = sql.connect("recovery.db")
+	cursor = conn.cursor()
+	cursor.execute(
+		"""CREATE TABLE """ + db_name + """ (
+			name TEXT,
+			date_created TIMESTAMP
+		)"""
+	)
+	conn.commit()
+	conn.close()
+
+def insertRow(db_name,regis):
+	conn = sql.connect("recovery.db")
+	instruc = "INSERT INTO " + db_name +" (name, date_created) VALUES (?, ?);"
+	cursor = conn.cursor()
+	cursor.execute(instruc, regis)
+	conn.commit()
+	conn.close()
+
+def createTable_ld(db_name):
+	conn = sql.connect("recovery.db")
+	cursor = conn.cursor()
+	cursor.execute(
+		"""CREATE TABLE """ + db_name + """ (
+			name TEXT,
+			type TEXT
+		)"""
+	)
+	conn.commit()
+	conn.close()
+
+def insertRow_ld(db_name,regis):
+	conn = sql.connect("recovery.db")
+	instruc = "INSERT INTO " + db_name +" (name, type) VALUES (?, ?);"
+	cursor = conn.cursor()
+	cursor.execute(instruc, regis)
+	conn.commit()
+	conn.close()
+
+#-------------------------DATABASE CREATION--------------------------------
+
+#------------------------DATABASE CONSULTING-------------------------------
+#------------------------DATABASE CONSULTING-------------------------------
 
 
 if __name__ == "__main__":
