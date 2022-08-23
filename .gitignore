@@ -1,1 +1,4 @@
 .DS_Store
+pycrip_install.txt
+__pycache__/
+recovery.db
