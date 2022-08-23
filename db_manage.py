@@ -27,14 +27,6 @@ def insertRow(tb_name,regis):
 	conn.commit()
 	conn.close()
 
-def updateRow(tb_name,regis):
-	conn = sql.connect("recovery.db")
-	instruc = "UPDATE " + tb_name +" SET date_created = '%s';" % (str(regis[1]))
-	cursor = conn.cursor()
-	cursor.execute(instruc)
-	conn.commit()
-	conn.close()
-
 def createTable_ld(tb_name):
 	conn = sql.connect("recovery.db")
 	cursor = conn.cursor()
@@ -55,14 +47,6 @@ def insertRow_ld(tb_name,regis):
 	conn.commit()
 	conn.close()
 
-def updateRow_ld(tb_name,regis):
-	conn = sql.connect("recovery.db")
-	instruc = "UPDATE " + tb_name +" SET name = '%s' AND type = '%s' ;" % (str(regis[0]), str(regis[1]))
-	cursor = conn.cursor()
-	cursor.execute(instruc)
-	conn.commit()
-	conn.close()
-
 #-------------------------DATABASE CREATION--------------------------------
 
 #------------------------DATABASE CONSULTING-------------------------------
@@ -76,6 +60,26 @@ def select_from_db(dates, tb_name):
         date_2 = dates[1]
     conn = sql.connect("recovery.db")
     instruc = "SELECT * FROM " + tb_name + " WHERE date_created >= '%s' AND date_created <= '%s' ORDER BY date_created DESC;" % (str(date_1), str(date_2))
+    cursor = conn.cursor()
+    cursor.execute(instruc)
+    d_list = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return (d_list)
+
+def select_from_db_ld(tb_name):
+    conn = sql.connect("recovery.db")
+    instruc = "SELECT * FROM " + tb_name + ";"
+    cursor = conn.cursor()
+    cursor.execute(instruc)
+    d_list = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return (d_list)
+
+def select_exix(regis, tb_name):
+    conn = sql.connect("recovery.db")
+    instruc = "SELECT name FROM " + tb_name + " WHERE name = '%s';" % (str(regis[0]))
     cursor = conn.cursor()
     cursor.execute(instruc)
     d_list = cursor.fetchall()

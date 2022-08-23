@@ -23,10 +23,8 @@ def recent_files(table_name_list):
                     regis = []
                     regis.append(f)
                     regis.append(f_time)
-                    try:
+                    if (select_exix(regis, tb_name) == []):
                         insertRow(tb_name, regis)
-                    except:
-                        pass
                 except:
                     pass
     return table_name_list
@@ -54,10 +52,8 @@ def temp_files(table_name_list):
                     regis = []
                     regis.append(f)
                     regis.append(f_time)
-                    try:
+                    if (select_exix(regis, tb_name) == []):
                         insertRow(tb_name, regis)
-                    except:
-                        pass
                 except:
                     pass
     return table_name_list

@@ -6,9 +6,10 @@ c = wmi.WMI()
 
 #----------------------------CONECTED DEVICES----------------------------------
 
-def device_conected():
+def device_conected(table_name_list_always):
 
     tb_name_pm = "PhysicalMedia"
+    table_name_list_always.add(tb_name_pm)
     try:
         createTable(tb_name_pm)
     except:
@@ -20,13 +21,12 @@ def device_conected():
             if item.Name:
                 regis = []
                 regis.append(item.Name)
-                regis.append(datetime.datetime.now())
-                try:
+                regis.append(datetime.datetime.now().date())
+                if (select_exix(regis, tb_name_pm) == []):
                     insertRow(tb_name_pm, regis)
-                except:
-                    pass
 
     tb_name_dd = "DiskDrive"
+    table_name_list_always.add(tb_name_dd)
     try:
         createTable(tb_name_dd)
     except:
@@ -34,15 +34,12 @@ def device_conected():
     for drive in c.Win32_DiskDrive():
         regis = []
         regis.append(drive.Name)
-        regis.append(datetime.datetime.now())
-        try:
+        regis.append(datetime.datetime.now().date())
+        if (select_exix(regis, tb_name_dd) == []):
             insertRow(tb_name_dd, regis)
-        except:
-            pass
-        else:
-            updateRow(tb_name_dd, regis)
 
     tb_name_ld = "LogicalDisk"
+    table_name_list_always.add(tb_name_ld)
     try:
         createTable_ld(tb_name_ld)
     except:
@@ -51,13 +48,11 @@ def device_conected():
         regis = []
         regis.append(disk.Name)
         regis.append(hd_type(disk.DriveType))
-        insertRow_ld(tb_name_ld, regis)
-        try:
+        if (select_exix(regis, tb_name_ld) == []):
             insertRow_ld(tb_name_ld, regis)
-        except:
-            pass
 
     tb_name_usb = "USB"
+    table_name_list_always.add(tb_name_usb)
     try:
         createTable(tb_name_usb)
     except:
@@ -65,11 +60,11 @@ def device_conected():
     for usb in c.Win32_USBController():
         regis = []
         regis.append(usb.Name)
-        regis.append(datetime.datetime.now())
-        try:
-            insertRow(tb_name_dd, regis)
-        except:
-            pass
+        regis.append(datetime.datetime.now().date())
+        if (select_exix(regis, tb_name_usb) == []):
+            insertRow(tb_name_usb, regis)
+    
+    return table_name_list_always
 
 
 def hd_type(h_type):

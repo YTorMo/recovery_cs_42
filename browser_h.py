@@ -21,10 +21,8 @@ def browser_history(table_name_list):
         h_url = h[1]
         regis.append(h_url)
         regis.append(h_date)
-        try:
+        if (select_exix(regis, tb_name) == []):
             insertRow(tb_name, regis)
-        except:
-            pass
     return table_name_list
 
 #----------------------------BROWSER HISTORY-----------------------------------

@@ -27,10 +27,8 @@ def events_log(table_name_list):
         d = rec_time[0]
         rec_time = datetime.date(int(y), int(m), int(d))
         regis.append(rec_time)
-        try:
+        if (select_exix(regis, tb_name) == []):
             insertRow(tb_name, regis)
-        except:
-            pass
     return table_name_list
 
 #-------------------------------EVENTS LOG-------------------------------------

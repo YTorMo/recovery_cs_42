@@ -4,10 +4,16 @@ import datetime
 
 def arg_getter():
     v_format = False
+    print("Insert a range of dates. If you don't write anything, recovery displays info from the last 7 days.")
     print("First date:")
     while (v_format == False):
         fd_1 = str(input())
         v_format = valid_format(fd_1, v_format)
+    if (str(fd_1) == ""):
+        t_fd_1 = datetime.datetime.now().date() - datetime.timedelta(days=7)
+        t_fd_2 = datetime.datetime.now().date()
+        args_t = [t_fd_1, t_fd_2]
+        return args_t
     t_fd_1 = str_to_date(fd_1)
     print("Second date:")
     v_format = False
@@ -35,6 +41,8 @@ def str_to_date(fd):
 
 def valid_format(fd, v_format):
     s_fd = str(fd).split("-")
+    if(str(fd) == ""):
+        return True
     if(len(s_fd) < 3):
         print("Invalid time format.\nProgram only acceps formats yyyy-mm-dd or dd-mm-yyyy.\nIntroduce a valid date:")
         return (v_format)

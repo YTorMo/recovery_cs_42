@@ -35,10 +35,8 @@ def software_installed(table_name_list):
         time_inst = datetime.date(int(y), int(m), int(d))
         regis.append(product.Name)
         regis.append(time_inst)
-        try:
+        if (select_exix(regis, tb_name) == []):
             insertRow(tb_name, regis)
-        except:
-            pass
 
 
     for inst in c.Win32_InstalledWin32Program ():
@@ -55,10 +53,8 @@ def software_installed(table_name_list):
         path_date = find_path_date(elem_diff)
         regis.append(elem_diff)
         regis.append(path_date)
-        try:
+        if (select_exix(regis, tb_name) == []):
             insertRow(tb_name, regis)
-        except:
-            pass
     return table_name_list
 
 
@@ -108,9 +104,7 @@ def get_install_date(app, tb_name, regis):
         d_date = int(splt_date[-1][:-1])
         inst_date = datetime.date(int(y_date), int(m_date), int(d_date))
         regis.append(inst_date)
-    try:
+    if (select_exix(regis, tb_name) == []):
         insertRow(tb_name, regis)
-    except:
-        pass
 
 #---------------------------SOFTWARE INSTALLED---------------------------------
