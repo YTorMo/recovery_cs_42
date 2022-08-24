@@ -11,6 +11,7 @@ def recent_files(table_name_list):
         createTable(tb_name)
     except:
         pass
+    deleteTableRow(tb_name)
 
     HOME = os.getenv("HOME")
     PATH_RECENT = HOME + "\AppData\Roaming\Microsoft\Windows\Recent"
@@ -23,8 +24,7 @@ def recent_files(table_name_list):
                     regis = []
                     regis.append(f)
                     regis.append(f_time)
-                    if (select_exix(regis, tb_name) == []):
-                        insertRow(tb_name, regis)
+                    insertRow(tb_name, regis)
                 except:
                     pass
     return table_name_list
@@ -40,6 +40,7 @@ def temp_files(table_name_list):
         createTable(tb_name)
     except:
         pass
+    deleteTableRow(tb_name)
 
     HOME = os.getenv("HOME")
     PATH_RECENT = HOME + "\AppData\Local\Temp"
@@ -52,8 +53,7 @@ def temp_files(table_name_list):
                     regis = []
                     regis.append(f)
                     regis.append(f_time)
-                    if (select_exix(regis, tb_name) == []):
-                        insertRow(tb_name, regis)
+                    insertRow(tb_name, regis)
                 except:
                     pass
     return table_name_list

@@ -22,6 +22,7 @@ def software_installed(table_name_list):
         createTable(tb_name)
     except:
         pass
+    deleteTableRow(tb_name)
 
     installed_app(tb_name)
 #    for inst_s in c.Win32_InstalledStoreProgram():
@@ -35,8 +36,7 @@ def software_installed(table_name_list):
         time_inst = datetime.date(int(y), int(m), int(d))
         regis.append(product.Name)
         regis.append(time_inst)
-        if (select_exix(regis, tb_name) == []):
-            insertRow(tb_name, regis)
+        insertRow(tb_name, regis)
 
 
     for inst in c.Win32_InstalledWin32Program ():
@@ -53,8 +53,7 @@ def software_installed(table_name_list):
         path_date = find_path_date(elem_diff)
         regis.append(elem_diff)
         regis.append(path_date)
-        if (select_exix(regis, tb_name) == []):
-            insertRow(tb_name, regis)
+        insertRow(tb_name, regis)
     return table_name_list
 
 
@@ -104,7 +103,6 @@ def get_install_date(app, tb_name, regis):
         d_date = int(splt_date[-1][:-1])
         inst_date = datetime.date(int(y_date), int(m_date), int(d_date))
         regis.append(inst_date)
-    if (select_exix(regis, tb_name) == []):
-        insertRow(tb_name, regis)
+    insertRow(tb_name, regis)
 
 #---------------------------SOFTWARE INSTALLED---------------------------------

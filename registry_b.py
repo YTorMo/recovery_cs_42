@@ -14,6 +14,7 @@ def Registry_branches_c_d(table_name_list):
         createTable(tb_name)
     except:
         pass
+    deleteTableRow(tb_name)
     registry_LM(tb_name)
     registry_CU(tb_name)
     return table_name_list
@@ -28,8 +29,7 @@ def registry_LM(tb_name):
     regis = []
     regis.append("Local Machine registry branches changes date (CurrentVersionRun)")
     regis.append(dt)
-    if (select_exix(regis, tb_name) == []):
-        insertRow(tb_name, regis)
+    insertRow(tb_name, regis)
 
 def registry_CU(tb_name):
     key_2 = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
@@ -41,7 +41,6 @@ def registry_CU(tb_name):
     regis = []
     regis.append("Current User registry branches changes date (CurrentVersionRun)")
     regis.append(dt_2)
-    if (select_exix(regis, tb_name) == []):
-        insertRow(tb_name, regis)
+    insertRow(tb_name, regis)
 
 #----------------------------REGISTRY BRANCHES---------------------------------

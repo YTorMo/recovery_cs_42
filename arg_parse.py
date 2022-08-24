@@ -4,7 +4,9 @@ import datetime
 
 def arg_getter():
     v_format = False
-    print("Insert a range of dates. If you don't write anything, recovery displays info from the last 7 days.")
+    print("\nINFO:")
+    print("Insert a range of dates. If you don't write anything, recovery displays info from the last 7 days.\nProgram only acceps formats yyyy-mm-dd or dd-mm-yyyy.")
+    print("\n\n")
     print("First date:")
     while (v_format == False):
         fd_1 = str(input())

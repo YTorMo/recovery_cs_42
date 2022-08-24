@@ -14,6 +14,7 @@ def device_conected(table_name_list_always):
         createTable(tb_name_pm)
     except:
         pass
+    deleteTableRow(tb_name_pm)
     if not c.Win32_PhysicalMedia():
         print("No Physical Media devices")
     else:
@@ -22,8 +23,7 @@ def device_conected(table_name_list_always):
                 regis = []
                 regis.append(item.Name)
                 regis.append(datetime.datetime.now().date())
-                if (select_exix(regis, tb_name_pm) == []):
-                    insertRow(tb_name_pm, regis)
+                insertRow(tb_name_pm, regis)
 
     tb_name_dd = "DiskDrive"
     table_name_list_always.add(tb_name_dd)
@@ -31,12 +31,12 @@ def device_conected(table_name_list_always):
         createTable(tb_name_dd)
     except:
         pass
+    deleteTableRow(tb_name_dd)
     for drive in c.Win32_DiskDrive():
         regis = []
         regis.append(drive.Name)
         regis.append(datetime.datetime.now().date())
-        if (select_exix(regis, tb_name_dd) == []):
-            insertRow(tb_name_dd, regis)
+        insertRow(tb_name_dd, regis)
 
     tb_name_ld = "LogicalDisk"
     table_name_list_always.add(tb_name_ld)
@@ -44,12 +44,12 @@ def device_conected(table_name_list_always):
         createTable_ld(tb_name_ld)
     except:
         pass
+    deleteTableRow(tb_name_ld)
     for disk in c.Win32_LogicalDisk():
         regis = []
         regis.append(disk.Name)
         regis.append(hd_type(disk.DriveType))
-        if (select_exix(regis, tb_name_ld) == []):
-            insertRow_ld(tb_name_ld, regis)
+        insertRow_ld(tb_name_ld, regis)
 
     tb_name_usb = "USB"
     table_name_list_always.add(tb_name_usb)
@@ -57,12 +57,12 @@ def device_conected(table_name_list_always):
         createTable(tb_name_usb)
     except:
         pass
+    deleteTableRow(tb_name_usb)
     for usb in c.Win32_USBController():
         regis = []
         regis.append(usb.Name)
         regis.append(datetime.datetime.now().date())
-        if (select_exix(regis, tb_name_usb) == []):
-            insertRow(tb_name_usb, regis)
+        insertRow(tb_name_usb, regis)
     
     return table_name_list_always
 

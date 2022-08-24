@@ -11,6 +11,7 @@ def browser_history(table_name_list):
         createTable(tb_name)
     except:
         pass
+    deleteTableRow(tb_name)
 
     outputs = get_history()
 
@@ -21,8 +22,7 @@ def browser_history(table_name_list):
         h_url = h[1]
         regis.append(h_url)
         regis.append(h_date)
-        if (select_exix(regis, tb_name) == []):
-            insertRow(tb_name, regis)
+        insertRow(tb_name, regis)
     return table_name_list
 
 #----------------------------BROWSER HISTORY-----------------------------------

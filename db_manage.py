@@ -21,9 +21,17 @@ def createTable(tb_name):
 
 def insertRow(tb_name,regis):
 	conn = sql.connect("recovery.db")
-	instruc = "INSERT INTO " + tb_name +" (name, date_created) VALUES (?, ?);"
+	instruc = "INSERT INTO '%s' (name, date_created) VALUES (?, ?);" % (tb_name)
 	cursor = conn.cursor()
 	cursor.execute(instruc, regis)
+	conn.commit()
+	conn.close()
+
+def updateRow(tb_name,regis):
+	conn = sql.connect("recovery.db")
+	instruc = "UPDATE " + tb_name + " SET date_created = CAST('%s' AS DATETIME) WHERE name = '%s'" % (str(regis[1]), str(regis[0]))
+	cursor = conn.cursor()
+	cursor.execute(instruc)
 	conn.commit()
 	conn.close()
 
@@ -44,6 +52,14 @@ def insertRow_ld(tb_name,regis):
 	instruc = "INSERT INTO " + tb_name +" (name, type) VALUES (?, ?);"
 	cursor = conn.cursor()
 	cursor.execute(instruc, regis)
+	conn.commit()
+	conn.close()
+
+def deleteTableRow(tb_name):
+	conn = sql.connect('recovery.db')
+	cursor = conn.cursor()
+	instruc = "DELETE FROM '%s';" % (tb_name)
+	cursor.execute(instruc)
 	conn.commit()
 	conn.close()
 
