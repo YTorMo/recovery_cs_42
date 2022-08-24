@@ -5,7 +5,7 @@ import datetime
 def arg_getter():
     v_format = False
     print("\nINFO:")
-    print("Insert a range of dates. If you don't write anything, recovery displays info from the last 7 days.\nProgram only acceps formats yyyy-mm-dd or dd-mm-yyyy.")
+    print("Insert a range of dates. If you don't write anything, recovery displays info from the last 7 days. If you only write the fiirst date, second date will be the actual date. \nProgram only acceps date formats yyyy-mm-dd or dd-mm-yyyy.")
     print("\n\n")
     print("First date:")
     while (v_format == False):
@@ -22,7 +22,10 @@ def arg_getter():
     while (v_format == False):
         fd_2 = str(input())
         v_format = valid_format(fd_2, v_format)
-    t_fd_2 = str_to_date(fd_2)
+    if (str(fd_2) == ""):
+        t_fd_2 = datetime.datetime.now().date()
+    else:
+        t_fd_2 = str_to_date(fd_2)
     if(t_fd_1 < t_fd_2):
         args_t = [t_fd_1, t_fd_2]
     else:
@@ -49,9 +52,23 @@ def valid_format(fd, v_format):
         print("Invalid time format.\nProgram only acceps formats yyyy-mm-dd or dd-mm-yyyy.\nIntroduce a valid date:")
         return (v_format)
     if(len(s_fd[0]) == 4 and len(s_fd[1]) == 2 and len(s_fd[2]) == 2):
-        v_format = True
+        try:
+            int(s_fd[0])
+            int(s_fd[1])
+            int(s_fd[2])
+        except:
+            print("Invalid time format.\nProgram only acceps formats yyyy-mm-dd or dd-mm-yyyy.\nIntroduce a valid date:")
+        else:
+            v_format = True
     elif(len(s_fd[2]) == 4 and len(s_fd[1]) == 2 and len(s_fd[0]) == 2):
-        v_format = True
+        try:
+            int(s_fd[0])
+            int(s_fd[1])
+            int(s_fd[2])
+        except:
+            print("Invalid time format.\nProgram only acceps formats yyyy-mm-dd or dd-mm-yyyy.\nIntroduce a valid date:")
+        else:
+            v_format = True
     else:
         print("Invalid time format.\nProgram only acceps formats yyyy-mm-dd or dd-mm-yyyy.\nIntroduce a valid date:")
     return (v_format)
