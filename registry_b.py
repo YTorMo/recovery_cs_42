@@ -15,32 +15,21 @@ def Registry_branches_c_d(table_name_list):
     except:
         pass
     deleteTableRow(tb_name)
-    registry_LM(tb_name)
-    registry_CU(tb_name)
+    
+    key_types = [winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER]
+    
+    for key in key_types:
+        # Data
+        handler = winreg.OpenKey(key, "Software\\Microsoft\\Windows\\CurrentVersion\\Run")
+        reg_key_ts = windows_ticks_to_unix_seconds(winreg.QueryInfoKey(handler)[2])
+        
+        # Date
+        dt = datetime.date.fromtimestamp(reg_key_ts)
+        
+        # Info collection
+        regis = ["Registry branches changes date (Software\\Microsoft\\Windows\\CurrentVersion\\Run)", dt]
+        insertRow(tb_name, regis)
+    
     return table_name_list
-
-def registry_LM(tb_name):
-    key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
-                        r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run")
-
-    reg_win_ts = winreg.QueryInfoKey(key)[2]
-    reg_key_ts = windows_ticks_to_unix_seconds(reg_win_ts)
-    dt = datetime.date.fromtimestamp(reg_key_ts)
-    regis = []
-    regis.append("Local Machine registry branches changes date (CurrentVersionRun)")
-    regis.append(dt)
-    insertRow(tb_name, regis)
-
-def registry_CU(tb_name):
-    key_2 = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                        r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run")
-
-    reg_win_ts_2 = winreg.QueryInfoKey(key_2)[2]
-    reg_key_ts_2 = windows_ticks_to_unix_seconds(reg_win_ts_2)
-    dt_2 = datetime.date.fromtimestamp(reg_key_ts_2)
-    regis = []
-    regis.append("Current User registry branches changes date (CurrentVersionRun)")
-    regis.append(dt_2)
-    insertRow(tb_name, regis)
 
 #----------------------------REGISTRY BRANCHES---------------------------------
